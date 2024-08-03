@@ -34,15 +34,19 @@ fun RallyNavHost(
     modifier: Modifier = Modifier
 ) {
     Log.d("RallyApp TAG", "RallyNavHost Render ")
+    // 1.NavHost需要定义一个初始路由页
     NavHost(
         navController = navController,
         startDestination = Overview.route,
         modifier = modifier
     ) {
+        // 2.路由的跳转集中在路由配置模块处理，让组件不需要关心如何进行路由跳转，只关注组件
+        // 本身需要的功能
         composable(route = Overview.route) {
             // 组件要分离关注点，以下是将导航分离出来
             OverviewScreen(
                 onClickSeeAllAccounts = {
+                    // 3. 可以给导航模块添加扩展函数，跳转到所有账户页面
                     navController.navigateSingleTopTo(Accounts.route)
                 },
                 onClickSeeAllBills = {
@@ -50,12 +54,18 @@ fun RallyNavHost(
                 },
                 onAccountClick = { accountType ->
                     // navigateToSingleAccount是NavHostController类的扩展函数
+                    // 跳转到指定账户页，这里就涉及到路由传参，要传账户类型
+                    // this.navigateSingleTopTo("${SingleAccount.route}/$accountType")
+                    // 跳转到查看单个账户类型，那么这个类型参数在SingleAccount页面如接收呢？
+                    // 其中一个简单方法是在带参数的路由配置内部接收即可
                     navController.navigateToSingleAccount(accountType)
                 }
             )
         }
         composable(route = Accounts.route) {
             Log.d("RallyApp TAG", "Accounts.route Render ")
+            // 这是账户列表，选中某个账户时，需要带参数跳转到单账户页面
+            // 涉及到动态路由传参
             AccountsScreen(
                 onAccountClick = { accountType ->
                     //  navigateToSingleAccount是类NavHostController的扩展函数
@@ -68,6 +78,9 @@ fun RallyNavHost(
             BillsScreen()
         }
 
+        // SingleAccount参数路由配置，在这个路由配置组件内接收路由参数值
+        // 通过路由配置中的navBackStackEntry对象进行解析这个参数值
+        // 然后把动态路由参数值传递给组件即可
         // 增加带参数路由配置
         // this.navigateSingleTopTo("${SingleAccount.route}/$accountType")
         composable(
@@ -78,6 +91,7 @@ fun RallyNavHost(
             // 读取动态路由参数值
             val accountType =
                 navBackStackEntry.arguments?.getString(SingleAccount.accountTypeArg)
+
             SingleAccountScreen(accountType)
         }
     }

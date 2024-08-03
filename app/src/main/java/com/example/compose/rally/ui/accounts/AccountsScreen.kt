@@ -66,6 +66,10 @@ fun AccountsScreen(
 fun SingleAccountScreen(
     accountType: String? = UserData.accounts.first().name
 ) {
+    // 性能优化
+    // remember 属于计算字段 达到性能优化目的，只要accountType不变
+    // SingleAccountScreen 组件重新渲染时也不会去调用getAccount的方法去重新拉取值
+    // 这样account就不变，StatementBody组件就不会重新渲染
     // remember 计算字段对值进行记忆，当accountType发生变化时才会重新求值
     val account = remember(accountType) { UserData.getAccount(accountType) }
     StatementBody(

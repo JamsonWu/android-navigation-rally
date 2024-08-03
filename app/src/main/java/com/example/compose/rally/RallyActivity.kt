@@ -48,6 +48,8 @@ class RallyActivity : ComponentActivity() {
 @Composable
 fun RallyApp() {
     Log.d("RallyApp TAG", "RallyApp Render ")
+    // 这个示例没有状态管理，旋转屏幕时会重新获取状态，首页重新构建，是这样吗？
+    // 如何验证呢？todo...
     // 主题作为根组件
     RallyTheme {
         // 导航控制器
